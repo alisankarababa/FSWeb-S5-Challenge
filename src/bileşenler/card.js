@@ -17,7 +17,41 @@ const Card = (makale) => {
   //   </div>
   // </div>
   //
+
+    function func(tag)
+    {
+        return document.createElement(tag);
+    }
+    const {anabaslik, yazarFoto, yazarAdi} = makale;
+    const divCard = document.createElement("div");
+    divCard.classList.add("card");
+
+        const divHeadLine = func("div");
+        divHeadLine.classList.add("headline");
+        divHeadLine.textContent = anabaslik;
+        divCard.append(divHeadLine);
+
+        const divAuthor = func("div");
+        divAuthor.classList.add("author");
+        divCard.append(divAuthor);
+
+            const divImg = func("div");
+            divImg.classList.add("img-container");
+            divAuthor.append(divImg);
+
+                const img = func("img");
+                img.setAttribute("src", yazarFoto);
+                divImg.append(img);
+
+            const spanYazarAdi = func("span");
+            spanYazarAdi.textContent = `${ yazarAdi } tarafından`
+            divAuthor.append(spanYazarAdi);
+
+
+    return divCard;
 }
+
+import axios from "axios";
 
 const cardEkleyici = (secici) => {
   // GÖREV 6
@@ -28,6 +62,32 @@ const cardEkleyici = (secici) => {
   // Card bileşenini kullanarak yanıttaki her makale nesnesinden bir kart oluşturun.
   // Her cardı, fonksiyona iletilen seçiciyle eşleşen DOM'daki öğeye ekleyin.
   //
+
+
+    async function getArticle() 
+    {
+        await axios({
+            method: "get",
+            url: "http://localhost:5001/api/makaleler"
+        })
+        .then(function (response) {
+
+            const articles = Object.values(response.data.makaleler).flat(Infinity);
+            const articlesContainer = document.querySelector(secici);
+            articles.forEach(function (article) {
+                const div = Card(article);
+                articlesContainer.append(div);
+            })
+        })
+        .catch(function (error) {
+            console.log(error);
+        })
+        .finally(function () {
+            console.log("cardEkleyici: finally");
+        })
+    }
+
+    getArticle();
 }
 
 export { Card, cardEkleyici }
