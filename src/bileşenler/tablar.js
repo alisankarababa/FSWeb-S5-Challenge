@@ -28,6 +28,22 @@ const Tablar = (konu) => {
 
 import axios from "axios";
 
+let subjects = null;
+
+async function getTabs()
+{
+    await axios({
+        method: "get",
+        url: "http://localhost:5001/api/konular"
+    })
+    .then(function(response)
+    {
+        subjects = response.data.konular;
+    })
+    .catch(function (error) {
+        console.log("getTabs:", error);
+    })
+}
 
 const tabEkleyici = (secici) => {
   // GÖREV 4
@@ -38,30 +54,16 @@ const tabEkleyici = (secici) => {
   // Tabları, fonksiyona iletilen seçiciyle eşleşen DOM'daki öğeye ekleyin.
   //
 
-    let subjects = null;
-
-    function getTabs()
-    {
-        return axios({
-            method: "get",
-            url: "http://localhost:5001/api/konular"
-        })
-    }
+   
 
     async function placeTabs()
     {
-        await getTabs()
-        .then(function(response)
+        await getTabs();
+        if (subjects)
         {
-            const div = Tablar(response.data.konular);
+            const div = Tablar(subjects);
             document.querySelector(secici).append(div);
-        })
-        .catch(function (error) {
-            console.log("placeTabs error: ", error);
-        })
-        .finally(function () {
-            console.log("placeTabs: finally");
-        })
+        }
     }
 
     placeTabs();
